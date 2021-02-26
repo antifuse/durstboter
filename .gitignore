@@ -1,0 +1,10 @@
+.vscode/
+node_modules/
+build/
+dist/
+tmp/
+temp/
+config.json
+*.log
+*.sqlite
+package-lock.json
