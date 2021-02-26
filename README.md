@@ -1,7 +1,3 @@
-# Awesome Project Build with TypeORM
+# Durstboter 3.0
 
-Steps to run this project:
-
-1. Run `npm i` command
-2. Setup database settings inside `ormconfig.json` file
-3. Run `npm start` command
+This is the third time I've tried a durstboter. It's even worse now. Sounds like it's about time to do this in a decent language, but alas, I want to stick to JS.
