@@ -28,6 +28,7 @@ export class Bot {
         await this.client.login(this.cfg.token);
         await this.initialiseDB();
         this.client.on("message", this.handleMessage.bind(this));
+        this.client.on("guildCreate", this.serverJoin.bind(this));
     }
 
     async handleMessage(message: Discord.Message) {
@@ -59,6 +60,14 @@ export class Bot {
         let guilds = await Guild.find();
         this.cache.guilds = new Discord.Collection();
         guilds.forEach(guild => this.cache.guilds.set(guild.id, guild));
+    }
+
+    async serverJoin(joined: Discord.Guild) {
+        if (!this.cache.guilds.find(g => g.id == joined.id)) {
+            let guild = new Guild(joined.id);
+            this.cache.guilds.set(joined.id, guild);
+            guild.save();
+        }
     }
 }
 
