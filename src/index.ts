@@ -5,62 +5,23 @@ import cron = require("node-cron");
 import { Guild } from "./entity/guild"
 import log from "./log";
 import { Connection, createConnection } from "typeorm";
-
-
-interface command {
-    do: Function,
-    cog: string
-}
-
-export function ServerOnly(_target: any, _propertyKey: string, descriptor: PropertyDescriptor) {
-        const method = descriptor.value;
-        descriptor.value = (message: Discord.Message, ...args: any[]) => {
-            if (!message.member) return;
-            method.apply(this, [message].concat(args));
-        }
-}
-
-
-export function Restricted(requiredPerms: Discord.PermissionResolvable[]) {
-    return function(_target: any, _propertyKey: string, descriptor: TypedPropertyDescriptor<Function>) {
-        const method = descriptor.value;
-        descriptor.value = (message: Discord.Message, ...args: any[]) => {
-            if (!message.member) {
-                method.apply(this, [message].concat(args));
-            } 
-            else {
-                for (let permission of requiredPerms) {
-                    if (!message.member.permissionsIn(message.channel).has(permission)) {
-                        message.channel.send('<:wirklich:711126263514792019>');
-                        return;
-                    }
-                }
-                method.apply(this, [message].concat(args));
-            }
-        }
-    }
-}
-
-export function Command(options?: {name?: string, aliases?: string[], cog?: string}) {
-    return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-        options = options || {};
-        let primaryName = options.name || propertyKey;
-        bot.commands.set(primaryName.toLowerCase(), {do: descriptor.value, cog: options.cog || "std"});
-        options.aliases?.forEach(alias => bot.commands.set(alias, {do: descriptor.value, cog: options.cog || "std"}));
-    }
-}
+import cogs from "./cogs/"
 
 export class Bot {
     cfg: any;
-    cache: {guilds: Discord.Collection<string, Guild>, cogs: string[]};
+    cache: {guilds: Discord.Collection<string, Guild>};
     db: Connection;
     client: Discord.Client;
-    commands: Discord.Collection<string, command>;
-    constructor(config: string) {
+    modules: Discord.Collection<string, Module>;
+    constructor(config: string, cogs: any[]) {
         this.cfg = JSON.parse(fs.readFileSync(config, {encoding: "utf-8"}));
         this.client = new Discord.Client();
-        this.commands = new Discord.Collection();
-        this.cache = {guilds: new Discord.Collection(), cogs: []};
+        this.modules = new Discord.Collection();
+        this.cache = {guilds: new Discord.Collection()};
+        cogs.forEach(cog => {
+            let c = new cog();
+            this.modules.set(c.name, c);
+        })
     }
 
     async start() {
@@ -71,18 +32,15 @@ export class Bot {
 
     async handleMessage(message: Discord.Message) {
         log.info(`${message.author.tag}/${message.channel.toString()}: ${message.content}`);
-        if (message.author.bot) return;
-        if (message.channel.type === 'text') {
+        /* if (message.channel.type === 'text') {
             let last2 = (await message.channel.messages.fetch({ before: message.id, limit: 2 })).array();
             if (!last2[0].author.bot && !last2[1].author.bot && message.content == last2[0].content && message.content == last2[1].content && !last2[0].author.equals(last2[1].author) && !message.author.equals(last2[0].author) && !message.author.equals(last2[1].author)) message.channel.send(message.content);
-        }
-        let prefix = this.cache.guilds.get(message.guild.id).prefix;
-        if (!message.content.startsWith(prefix)) return;
-        let args = message.content.slice(prefix.length).split(/ +/);
-        let command = this.commands.get(args.shift().toLowerCase());
-        if (command && (this.cache.guilds.get(message.guild.id).activatedCogs.includes(command.cog) || command.cog == "std")) {
-            command.do(message, args, this);
-        }
+        } */
+        let guild = this.cache.guilds.get(message.guild?.id);
+        if (guild) guild.activatedCogs.forEach(c => {
+            if (c != "std") this.modules.get(c)?.handleMessage(message, this);
+        });
+        this.modules.get("std").handleMessage(message, this);
     }
 
     async initialiseDB() {
@@ -95,11 +53,6 @@ export class Bot {
                 guild.save();
             }
         });
-        this.commands.forEach((command) => {
-            if (!this.cache.cogs.includes(command.cog)) {
-                this.cache.cogs.push(command.cog);
-            }
-        });
     }
 
     async updateCache() {
@@ -109,11 +62,11 @@ export class Bot {
     }
 }
 
-let bot = new Bot("./config.json");
-import "./cogs/apis"
-import "./cogs/standard"
+let bot = new Bot("./config.json", cogs);
+
+import { Module } from "./cog";
 bot.start().then(()=> {
-    log.info(`Connected and initialised with ${bot.cache.cogs.length} cogs and ${bot.cache.guilds.size} guilds. Listening.`)
+    log.info(`Connected and initialised with ${bot.modules.size} cogs and ${bot.cache.guilds.size} guilds. Listening.`)
 });
 
 

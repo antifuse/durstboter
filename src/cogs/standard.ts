@@ -1,8 +1,10 @@
-import { DMChannel, Message, MessageEmbed } from "discord.js";
-import { Bot, Command, Restricted, ServerOnly } from "..";
+import { DMChannel, Guild, Message, MessageEmbed } from "discord.js";
+import { Bot } from "..";
+import { Cog, Command, Module, Restricted, ServerOnly } from "../cog";
 import log from "../log";
 
-export default class Standard {
+@Cog()
+export default class Standard extends Module {
 
     @Command()
     async invalidateCache(message: Message, args: string[], bot: Bot) {
@@ -34,7 +36,7 @@ export default class Standard {
     @Restricted(["ADMINISTRATOR"])
     async activateCog(message: Message, args: string[], bot: Bot) {
         let guild = bot.cache.guilds.get(message.guild.id);
-        if (bot.cache.cogs.includes(args[0])) {
+        if (bot.modules.has(args[0])) {
             if (guild.activatedCogs.includes(args[0])) message.channel.send(`Der Cog ${args[0]} ist bereits aktiviert!`);
             else {
                 guild.activatedCogs.push(args[0]);
@@ -53,6 +55,23 @@ export default class Standard {
             guild.save();
             message.channel.send(`Der Cog ${args[0]} wurde deaktiviert!`);
         } else message.channel.send(`Der Cog ${args[0]} existiert nicht oder ist nicht geladen!`);
+    }
+
+    @Command({ aliases: ["reload"] })
+    @Restricted(["ADMINISTRATOR"])
+    async reloadCog(message: Message, args: string[], bot: Bot) {
+        let module;
+        try {
+            module = await import(`./${args[0]}`);
+            module = new module.default();
+        } catch (e: any) {
+            log.warn(e);
+            message.channel.send(`Der Cog ${args[0]} kann nicht geladen werden!`);
+            return;
+        }
+        log.info(`Module activated with name ${module.name}`);
+        bot.modules.set(module.name, module);
+        message.channel.send(`Der Cog ${module.name} wurde geladen!`);
     }
 
     @Command({ aliases: ["ava", "pfp", "profilbild", "pb"] })
@@ -104,10 +123,8 @@ export default class Standard {
             .then(messages => log.info(`Löschte ${messages.size} Nachrichten`));
     }
 
-    @Command()
+    @Command({ aliases: ["ing"] })
     ping(message: Message, args: string[], bot: Bot) {
-        message.channel.send('<:glatt:721807880264613943>').then(()=>log.info("Wurde gepingt, glattete zurück."));
+        message.channel.send('<:glatt:721807880264613943>').then(() => log.info("Wurde gepingt, glattierte zurück."));
     }
-
-
 }
