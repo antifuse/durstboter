@@ -1,6 +1,4 @@
 import { Collection, DiscordAPIError, Message, PermissionResolvable } from "discord.js";
-import { stringify } from "querystring";
-import { config } from "winston";
 import { Bot } from ".";
 const Functions = Symbol("Functions");
 

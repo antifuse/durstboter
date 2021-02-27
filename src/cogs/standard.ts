@@ -1,4 +1,4 @@
-import { DMChannel, Guild, Message, MessageEmbed } from "discord.js";
+import { DMChannel, Message, MessageEmbed } from "discord.js";
 import { Bot } from "..";
 import { Cog, Command, Module, Restricted, ServerOnly } from "../cog";
 import log from "../log";

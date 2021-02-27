@@ -1,5 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, BaseEntity, PrimaryColumn, ManyToMany, JoinTable, JoinColumn} from "typeorm";
-import { JoinAttribute } from "typeorm/query-builder/JoinAttribute";
+import {Entity, Column, BaseEntity, PrimaryColumn} from "typeorm";
 
 
 @Entity()
