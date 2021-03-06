@@ -24,6 +24,7 @@ export default class Fun extends Module {
         super.handleMessage(message, bot);
         if (message.channel.type === 'text' && !message.author.bot) {
             let last2 = (await message.channel.messages.fetch({ before: message.id, limit: 2 })).array();
+            if (last2.length < 2 || !message.content) return;
             if (!last2[0].author.bot && !last2[1].author.bot && message.content == last2[0].content && message.content == last2[1].content && !last2[0].author.equals(last2[1].author) && !message.author.equals(last2[0].author) && !message.author.equals(last2[1].author)) message.channel.send(message.content);
         }
     }
