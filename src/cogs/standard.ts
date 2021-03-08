@@ -129,15 +129,13 @@ export default class Standard extends Module {
     }
 
     @Command()
-    sendmsg(message: Message, args: string[], bot: Bot) {
-        let channel = message.client.channels.fetch(args[0]);
+    async sendmsg(message: Message, args: string[], bot: Bot) {
+        let channel = await message.client.channels.fetch(args[0]);
         if (channel && (channel instanceof TextChannel || channel instanceof DMChannel)) {
-            try {
-                args.shift();
-                channel.send(args.join(" "));
-            } catch (error) {
-                log.error("i guess some sendmsg didn't work")
-            }
+            args.shift();
+            channel.send(args.join(" ") || "_ _").catch(err => {
+                log.error("i guess some sendmsg didn't work");
+            });
         }
     }
 }
