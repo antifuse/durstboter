@@ -1,6 +1,8 @@
-import funnyapis from "./fun";
-import std from "./standard";
+import Brueck from "./brueck";
+import Funnyapis from "./fun";
+import Std from "./standard";
 export default [
-    std,
-    funnyapis
+    Std,
+    Funnyapis, 
+    Brueck
 ]

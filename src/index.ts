@@ -73,5 +73,3 @@ import { Module } from "./cog";
 bot.start().then(()=> {
     log.info(`Connected and initialised with ${bot.modules.size} cogs and ${bot.cache.guilds.size} guilds. Listening.`)
 });
-
-
