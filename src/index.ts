@@ -3,13 +3,14 @@ import fs = require("fs");
 import "reflect-metadata";
 import * as chalk from "chalk";
 import { Guild } from "./entity/guild"
+import { User } from "./entity/user"
 import log from "./log";
 import { Connection, createConnection } from "typeorm";
 import cogs from "./cogs/"
 
 export class Bot {
     cfg: any;
-    cache: {guilds: Discord.Collection<string, Guild>};
+    cache: {guilds: Discord.Collection<string, Guild>, users: Discord.Collection<string, User>};
     db: Connection;
     client: Discord.Client;
     modules: Discord.Collection<string, Module>;
@@ -17,7 +18,7 @@ export class Bot {
         this.cfg = JSON.parse(fs.readFileSync(config, {encoding: "utf-8"}));
         this.client = new Discord.Client();
         this.modules = new Discord.Collection();
-        this.cache = {guilds: new Discord.Collection()};
+        this.cache = {guilds: new Discord.Collection(), users: new Discord.Collection()};
         cogs.forEach(cog => {
             let c = new cog();
             this.modules.set(c.name, c);
@@ -56,6 +57,9 @@ export class Bot {
         let guilds = await Guild.find();
         this.cache.guilds = new Discord.Collection();
         guilds.forEach(guild => this.cache.guilds.set(guild.id, guild));
+        let users = await User.find();
+        this.cache.users = new Discord.Collection();
+        users.forEach(user => this.cache.users.set(user.id, user));
     }
 
     async serverJoin(joined: Discord.Guild) {
