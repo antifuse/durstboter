@@ -3,6 +3,7 @@ import { Bot } from "..";
 import { Cog, Command, Module } from "../cog";
 import { User } from "../entity/user";
 import Last from "lastfm-typed";
+import log from "../log";
 
 @Cog("lastfm") 
 export default class LastFM extends Module {
@@ -36,7 +37,6 @@ export default class LastFM extends Module {
         fm.user.getRecentTracks(queryName).then(val => {
             let reply: MessageEmbed;
             if (val.tracks[0].nowplaying) {
-                console.log(val.tracks[0]);
                 reply = new MessageEmbed({
                     author: {name: `${val.meta.user} hört gerade:`},
                     title: val.tracks[0].name,
@@ -44,8 +44,8 @@ export default class LastFM extends Module {
                     thumbnail: val.tracks[0].image.reverse()[0],
                     color: "#387d6c"
                 });
-                reply.addField("Artist", val.tracks[0].artist.name, true);
-                if (val.tracks[0].album) reply.addField("Album", val.tracks[0].album.name, true);
+                if (val.tracks[0].artist.name) reply.addField("Artist", val.tracks[0].artist.name, true);
+                if (val.tracks[0].album.name) reply.addField("Album", val.tracks[0].album.name, true);
             }
             else reply = new MessageEmbed({
                 author: {name: `${val.meta.user} hört gerade:`},
@@ -56,6 +56,7 @@ export default class LastFM extends Module {
             
         }).catch(reject => {
             message.channel.send("Diese\\*r Nutzer\\*in wurde leider nicht gefunden!")
+            log.error(reject);
         })
     }
 }
