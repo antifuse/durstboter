@@ -32,7 +32,7 @@ export default class Fun extends Module {
             if (last2.length < 2 || !message.content) return;
             if (!last2[0].author.bot && !last2[1].author.bot && message.content == last2[0].content && message.content == last2[1].content && !last2[0].author.equals(last2[1].author) && !message.author.equals(last2[0].author) && !message.author.equals(last2[1].author)) message.channel.send(message.content);
         }
-        if (!this.reactions) return;
+        if (!this.reactions || message.author.bot) return;
         for (let el in this.reactions) {
             if (message.content.toLowerCase().match(el.toLowerCase())) message.channel.send(this.reactions[el]);
         }
