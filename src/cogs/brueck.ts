@@ -40,6 +40,7 @@ export default class Brueck extends Module {
             if (message.content.startsWith(bot.cache.guilds.get(message.guild.id).prefix + "zu")) {
                 cHere.stop();
                 cThere.stop();
+                message.delete();
             }
             else {
                 if (cHere.channel instanceof TextChannel || cHere.channel instanceof DMChannel) {
@@ -50,16 +51,6 @@ export default class Brueck extends Module {
                         image: message.attachments.first()
                     }));
                 }
-            }
-        });
-        cHere.on("end", () => {
-            if (cHere.channel instanceof TextChannel || cHere.channel instanceof DMChannel) {
-                cHere.channel.send("Cave Johnson, we're done here!");
-            }
-        });
-        cThere.on("end", () => {
-            if (cThere.channel instanceof TextChannel || cThere.channel instanceof DMChannel) {
-                cThere.channel.send("Cave Johnson, we're done here!");
             }
         });
     }

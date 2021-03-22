@@ -14,6 +14,7 @@ export default class Standard extends Module {
 
     @Command()
     @Restricted(["ADMINISTRATOR"])
+    @ServerOnly
     async prefix(message: Message, args: string[], bot: Bot) {
         let guild = bot.cache.guilds.get(message.guild.id);
         if (guild) guild.prefix = args[0] || guild.prefix;
@@ -24,6 +25,7 @@ export default class Standard extends Module {
 
     @Command({ aliases: ["nick", "setname"] })
     @Restricted(["CHANGE_NICKNAME"])
+    @ServerOnly
     async setnick(message: Message, args: string[], bot: Bot) {
         if (args[0]) {
             await message.guild.me.setNickname(args.join(" "));
@@ -34,6 +36,7 @@ export default class Standard extends Module {
 
     @Command({ aliases: ["activate"] })
     @Restricted(["ADMINISTRATOR"])
+    @ServerOnly
     async activateCog(message: Message, args: string[], bot: Bot) {
         let guild = bot.cache.guilds.get(message.guild.id);
         if (bot.modules.has(args[0])) {
@@ -41,6 +44,7 @@ export default class Standard extends Module {
             else {
                 guild.activatedCogs.push(args[0]);
                 guild.save();
+                bot.modules.get(args[0]).onActivation(message.guild);
                 message.channel.send(`Der Cog ${args[0]} wurde aktiviert!`);
             }
         } else message.channel.send(`Der Cog ${args[0]} existiert nicht oder ist nicht geladen!`);
@@ -48,6 +52,7 @@ export default class Standard extends Module {
 
     @Command({ aliases: ["deactivate"] })
     @Restricted(["ADMINISTRATOR"])
+    @ServerOnly
     async deactivateCog(message: Message, args: string[], bot: Bot) {
         let guild = bot.cache.guilds.get(message.guild.id);
         if (guild.activatedCogs.includes(args[0])) {
@@ -60,15 +65,16 @@ export default class Standard extends Module {
     @Command({ aliases: ["reload"] })
     @Restricted(["ADMINISTRATOR"])
     async reloadCog(message: Message, args: string[], bot: Bot) {
-        let module;
+        let module: Module;
         try {
-            module = await import(`./${args[0]}`);
-            module = new module.default();
+            let mod = await import(`./${args[0]}`);
+            module = new mod.default(bot);
         } catch (e: any) {
             log.warn(e);
             message.channel.send(`Der Cog ${args[0]} kann nicht geladen werden!`);
             return;
         }
+        module.onInit();
         log.info(`Module activated with name ${module.name}`);
         bot.modules.set(module.name, module);
         message.channel.send(`Der Cog ${module.name} wurde geladen!`);

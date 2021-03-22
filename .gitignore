@@ -8,3 +8,4 @@ config.json
 *.log
 *.sqlite
 package-lock.json
+reactions.json

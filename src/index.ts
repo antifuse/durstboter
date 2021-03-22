@@ -9,18 +9,18 @@ import { Connection, createConnection } from "typeorm";
 import cogs from "./cogs/"
 
 export class Bot {
-    cfg: any;
-    cache: {guilds: Discord.Collection<string, Guild>, users: Discord.Collection<string, User>};
-    db: Connection;
-    client: Discord.Client;
-    modules: Discord.Collection<string, Module>;
+    public cfg: any;
+    public cache: {guilds: Discord.Collection<string, Guild>, users: Discord.Collection<string, User>};
+    public db: Connection;
+    public client: Discord.Client;
+    public modules: Discord.Collection<string, Module>;
     constructor(config: string, cogs: any[]) {
         this.cfg = JSON.parse(fs.readFileSync(config, {encoding: "utf-8"}));
-        this.client = new Discord.Client();
+        this.client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
         this.modules = new Discord.Collection();
         this.cache = {guilds: new Discord.Collection(), users: new Discord.Collection()};
         cogs.forEach(cog => {
-            let c = new cog();
+            let c: Module = new cog(this);
             this.modules.set(c.name, c);
         })
     }
@@ -28,6 +28,7 @@ export class Bot {
     async start() {
         await this.client.login(this.cfg.token);
         await this.initialiseDB();
+        this.modules.forEach(m => m.onInit());
         this.client.on("message", this.handleMessage.bind(this));
         this.client.on("guildCreate", this.serverJoin.bind(this));
     }
@@ -36,9 +37,9 @@ export class Bot {
         log.info(`${chalk.cyan(message.author.tag)}/${message.channel.type == "text" ? chalk.gray(message.channel.name):"DM"}: ${message.content}`);
         let guild = this.cache.guilds.get(message.guild?.id);
         if (guild) guild.activatedCogs.forEach(c => {
-            if (c != "std") this.modules.get(c)?.handleMessage(message, this);
+            if (c != "std") this.modules.get(c)?.handleMessage.apply(c, [message, this]);
         });
-        this.modules.get("std").handleMessage(message, this);
+        this.modules.get("std").handleMessage.apply(this.modules.get("std"), [message, this]);
     }
 
     async initialiseDB() {
@@ -68,6 +69,7 @@ export class Bot {
             this.cache.guilds.set(joined.id, guild);
             guild.save();
         }
+        
     }
 }
 

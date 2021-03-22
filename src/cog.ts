@@ -1,8 +1,8 @@
-import { Collection, DiscordAPIError, Message, PermissionResolvable } from "discord.js";
+import { Collection, DiscordAPIError, Guild, Message, PermissionResolvable } from "discord.js";
 import { Bot } from ".";
 const Functions = Symbol("Functions");
 
-export function ServerOnly(_target: any, _propertyKey: string, descriptor: PropertyDescriptor) {
+export function ServerOnly(target: any, _propertyKey: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
     descriptor.value = (message: Message, ...args: any[]) => {
         if (!message.member) return;
@@ -12,7 +12,7 @@ export function ServerOnly(_target: any, _propertyKey: string, descriptor: Prope
 
 
 export function Restricted(requiredPerms: PermissionResolvable[]) {
-    return function (_target: any, _propertyKey: string, descriptor: TypedPropertyDescriptor<Function>) {
+    return function (target: any, _propertyKey: string, descriptor: TypedPropertyDescriptor<Function>) {
         const method = descriptor.value;
         descriptor.value = (message: Message, ...args: any[]) => {
             if (!message.member) {
@@ -61,12 +61,19 @@ export function Command(options?: { name?: string, aliases?: string[], cog?: str
 export class Module {
     public name: string;
     public commands: Collection<string, Function>;
+    public bot: Bot;
+    public constructor(bot: Bot) {
+        this.bot = bot;
+    }
     public handleMessage(message: Message, bot: Bot) {
         let prefix = message.guild ? bot.cache.guilds.get(message.guild.id).prefix : bot.cfg.dmprefix;
         if (message.content.startsWith(prefix)) {
             let args = message.content.slice(prefix.length).split(/ +/);
             let command = this.commands.get(args.shift().toLowerCase());
-            if (command) command(message, args, bot);
+            if (command) command.apply(this, [message, args, bot]);
         }
     }
+
+    public onActivation(guild: Guild) {}
+    public onInit() {}
 }

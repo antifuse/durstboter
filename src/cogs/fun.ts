@@ -10,8 +10,8 @@ const axios = Axios.default;
 export default class Fun extends Module {
 
     reactions: any;
-    constructor() {
-        super();
+    constructor(bot: Bot) {
+        super(bot);
         readFile("./reactions.json", {encoding: "utf-8"}, (err, data) => {
             this.reactions = JSON.parse(data);
         })
