@@ -37,9 +37,9 @@ export class Bot {
         log.info(`${chalk.cyan(message.author.tag)}/${message.channel.type == "text" ? chalk.gray(message.channel.name):"DM"}: ${message.content}`);
         let guild = this.cache.guilds.get(message.guild?.id);
         if (guild) guild.activatedCogs.forEach(c => {
-            if (c != "std") this.modules.get(c)?.handleMessage.apply(c, [message, this]);
+            if (c != "std") this.modules.get(c)?.handleMessage(message, this);
         });
-        this.modules.get("std").handleMessage.apply(this.modules.get("std"), [message, this]);
+        this.modules.get("std").handleMessage(message, this);
     }
 
     async initialiseDB() {
