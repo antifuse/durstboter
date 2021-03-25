@@ -34,7 +34,7 @@ export class Bot {
     }
 
     async handleMessage(message: Discord.Message) {
-        log.info(`${chalk.cyan(message.author.tag)}/${message.channel.type == "text" ? chalk.gray(message.channel.name):"DM"}: ${message.content}`);
+        if (!this.cfg.logoptout.includes(message.author.id)) log.info(`${chalk.cyan(message.author.tag)}/${message.channel.type == "text" ? chalk.gray(message.channel.name):"DM"}: ${message.content}`);
         let guild = this.cache.guilds.get(message.guild?.id);
         if (guild) guild.activatedCogs.forEach(c => {
             if (c != "std") this.modules.get(c)?.handleMessage(message, this);
@@ -69,8 +69,8 @@ export class Bot {
             this.cache.guilds.set(joined.id, guild);
             guild.save();
         }
-        
     }
+    
 }
 
 let bot = new Bot("./config.json", cogs);

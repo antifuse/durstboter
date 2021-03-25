@@ -29,6 +29,7 @@ export default class LastFM extends Module {
             return;
         }
         let queryName = args[0] || bot.cache.users.get(message.author.id)?.fmname;
+        if (queryName.match(/<@\d+>/)) queryName = bot.cache.users.get(message.mentions.users.array()[0].id)?.fmname;
         if (!queryName) {
             message.channel.send("Du hast keinen Namen angegeben und keinen last.fm-Account verknüpft!");
             return;
