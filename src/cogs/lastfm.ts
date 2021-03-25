@@ -28,8 +28,15 @@ export default class LastFM extends Module {
             message.channel.send(`Du hast ${args[1]} als last.fm-Account verknüpft!`);
             return;
         }
-        let queryName = args[0] || bot.cache.users.get(message.author.id)?.fmname;
-        if (queryName.match(/<@\d+>/)) queryName = bot.cache.users.get(message.mentions.users.array()[0].id)?.fmname;
+        let queryName;
+        if (args[0] && args[0].match(/<@!?\d+>/)) {
+            queryName = bot.cache.users.get(message.mentions.users.array()[0].id)?.fmname;
+            if (!queryName) {
+                message.channel.send("Diese\\*r Nutzer\\*in hat keinen last.fm-Account verknüpft!");
+                return;
+            }
+        }
+        queryName = args[0] || bot.cache.users.get(message.author.id); 
         if (!queryName) {
             message.channel.send("Du hast keinen Namen angegeben und keinen last.fm-Account verknüpft!");
             return;
