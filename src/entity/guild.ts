@@ -8,6 +8,7 @@ export class Guild extends BaseEntity{
         super();
         this.id = id;
         this.activatedCogs = [];
+        this.brettExcluded = [];
     }
 
     @PrimaryColumn()
@@ -24,5 +25,8 @@ export class Guild extends BaseEntity{
 
     @Column({nullable: true})
     brettThreshold: number; 
-    
+
+    @Column({type: "simple-array", nullable: true})
+    brettExcluded: string[];
+
 }

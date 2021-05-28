@@ -22,7 +22,7 @@ export default class Brett extends Module {
     async reactionUpdate(message: Message) {
         if (message.guild) {
             let guildEntry = this.bot.cache.guilds.get(message.guild.id);
-            if (!guildEntry.activatedCogs.includes(this.name) || !guildEntry.brettChannel) return;
+            if (!guildEntry.activatedCogs.includes(this.name) || !guildEntry.brettChannel || guildEntry.brettExcluded.includes(message.channel.id)) return;
             let brettChannel = await message.client.channels.fetch(guildEntry.brettChannel);
             if (!(brettChannel instanceof TextChannel)) return;
             let countedrs: [string, number][] = [];
@@ -72,6 +72,20 @@ export default class Brett extends Module {
         }
         this.bot.cache.guilds.set(message.guild.id, guild);
         guild.save();
+    }
+
+    @Command()
+    exclude(message: Message, args: string[]) {
+        let guildEntry = this.bot.cache.guilds.get(message.guild.id);
+        if (guildEntry.brettExcluded.includes(message.channel.id)) {
+            guildEntry.brettExcluded = guildEntry.brettExcluded.filter(e => e != message.channel.id);
+            message.channel.send("Dieser Channel ist nicht mehr vom Brett ausgenommen.")
+        } else {
+            guildEntry.brettExcluded.push(message.channel.id);
+            message.channel.send("Dieser Channel ist nun vom Brett ausgenommen.")
+        }
+        this.bot.cache.guilds.set(guildEntry.id, guildEntry);
+        guildEntry.save();
     }
 
     updateCache() {
