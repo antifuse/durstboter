@@ -77,6 +77,7 @@ export default class Brett extends Module {
     @Command()
     exclude(message: Message, args: string[]) {
         let guildEntry = this.bot.cache.guilds.get(message.guild.id);
+        guildEntry.brettExcluded = guildEntry.brettExcluded || [];
         if (guildEntry.brettExcluded.includes(message.channel.id)) {
             guildEntry.brettExcluded = guildEntry.brettExcluded.filter(e => e != message.channel.id);
             message.channel.send("Dieser Channel ist nicht mehr vom Brett ausgenommen.")
