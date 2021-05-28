@@ -18,5 +18,11 @@ export class Guild extends BaseEntity{
 
     @Column({type:"simple-array"})
     activatedCogs: string[];
+
+    @Column({nullable: true})
+    brettChannel: string;
+
+    @Column({nullable: true})
+    brettThreshold: number; 
     
 }

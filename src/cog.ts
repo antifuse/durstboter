@@ -76,4 +76,5 @@ export class Module {
 
     public onActivation(guild: Guild) {}
     public onInit() {}
+    public updateCache() {}
 }

@@ -1,3 +1,4 @@
+import Brett from "./brett";
 import Brueck from "./brueck";
 import Funnyapis from "./fun";
 import LastFM from "./lastfm";
@@ -8,5 +9,6 @@ export default [
     Funnyapis, 
     Brueck,
     LastFM,
-    ReactionRoles
+    ReactionRoles,
+    Brett
 ]

@@ -61,6 +61,7 @@ export class Bot {
         let users = await User.find();
         this.cache.users = new Discord.Collection();
         users.forEach(user => this.cache.users.set(user.id, user));
+        this.modules.forEach(m => m.updateCache());
     }
 
     async serverJoin(joined: Discord.Guild) {
