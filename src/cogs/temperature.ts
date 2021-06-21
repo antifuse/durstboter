@@ -8,7 +8,7 @@ export default class Temp extends Module {
     @Command()
     antitemp(message: Message, args: string[], bot: Bot) {
         axios.get("http://localhost:3328/temp").then(res => {
-            message.channel.send(`Die Temperatur in Antis Zimmer beträgt ${res.data.temperature} °C bei einer relativen Luftfeuchtigkeit von ${res.data.humidity}%`);
+            message.channel.send(`Die Temperatur in Antis Zimmer beträgt ${parseFloat(res.data.temperature).toFixed(2)} °C bei einer relativen Luftfeuchtigkeit von ${parseFloat(res.data.humidity).toFixed(2)}%`);
         });
     }
 }
