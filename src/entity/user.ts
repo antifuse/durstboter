@@ -16,3 +16,5 @@ export class User extends BaseEntity {
     fmname: string;
     
 }
+
+export default User;

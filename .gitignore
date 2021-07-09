@@ -3,6 +3,7 @@ node_modules/
 build/
 dist/
 tmp/
+docs/
 temp/
 config.json
 *.log

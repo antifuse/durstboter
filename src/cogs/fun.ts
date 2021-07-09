@@ -2,12 +2,12 @@ import * as Axios from "axios";
 import { Message } from "discord.js";
 import { fstat, readFile } from "fs";
 import { Cog, Command, Module } from "../cog";
-import { Bot } from "../index";
+import Bot from "../bot";
 import log from "../log";
 const axios = Axios.default;
 
 @Cog("fun")
-export default class Fun extends Module {
+export class Fun extends Module {
 
     reactions: any;
     constructor(bot: Bot) {
@@ -38,3 +38,5 @@ export default class Fun extends Module {
         }
     }
 }
+
+export default Fun;

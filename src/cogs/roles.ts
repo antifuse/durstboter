@@ -1,12 +1,12 @@
 import { Collection, Message, MessageEmbed, MessageReaction, ReactionCollector, User } from "discord.js";
-import { Bot } from "..";
+import Bot from "../bot";
 import { Cog, Command, Module, Restricted, ServerOnly } from "../cog";
 import { RoleMessage } from "../entity/rolemessage";
 import log from "../log";
 const regexc = /\s*(<a?:.+:(\d+)>)\s*:\s*(.+)\s*$/gm;
 const regexu = /\s*()([^:\s]+)\s*:\s*(.+)\s*$/gm;
 @Cog("roles")
-export default class ReactionRoles extends Module {
+export class ReactionRoles extends Module {
 
     messages: Collection<string, RoleMessage> = new Collection();
 
@@ -73,3 +73,5 @@ export default class ReactionRoles extends Module {
         }
     }
 }
+
+export default ReactionRoles;

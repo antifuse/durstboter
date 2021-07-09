@@ -1,10 +1,10 @@
 import { DMChannel, Message, MessageEmbed, TextChannel } from "discord.js";
-import { Bot } from "..";
+import Bot from "../bot";
 import { Cog, Command, Module } from "../cog"
 import log from "../log";
 
 @Cog("brueck")
-export default class Brueck extends Module {
+export class Brueck extends Module {
 
     @Command({aliases: ["brück", "brücke", "bruecke", "tunnel"]})
     async brueck(message: Message, args: string[], bot: Bot) {
@@ -55,3 +55,5 @@ export default class Brueck extends Module {
         });
     }
 }
+
+export default Brueck;

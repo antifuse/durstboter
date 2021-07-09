@@ -1,12 +1,12 @@
 import { Guild, Message, MessageEmbed } from "discord.js";
-import { Bot } from "..";
+import Bot from "../bot";
 import { Cog, Command, Module } from "../cog";
-import { User } from "../entity/user";
+import User from "../entity/user";
 import Last from "lastfm-typed";
 import log from "../log";
 
 @Cog("lastfm") 
-export default class LastFM extends Module {
+export class LastFM extends Module {
 
     @Command({aliases: ["last", "fm", "lfm"]})
     async lastfm(message: Message, args: string[], bot: Bot) {
@@ -68,3 +68,5 @@ export default class LastFM extends Module {
         })
     }
 }
+
+export default LastFM;

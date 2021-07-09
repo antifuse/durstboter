@@ -1,10 +1,11 @@
 import { DMChannel, Message, MessageEmbed, TextChannel } from "discord.js";
-import { Bot } from "..";
+import Bot from "../bot";
 import { Cog, Command, Module, Restricted, ServerOnly } from "../cog";
 import log from "../log";
+import { exec } from "child_process";
 
 @Cog()
-export default class Standard extends Module {
+export class Standard extends Module {
 
     @Command()
     async invalidateCache(message: Message, args: string[], bot: Bot) {
@@ -63,7 +64,7 @@ export default class Standard extends Module {
     }
 
     @Command({ aliases: ["reload"] })
-    @Restricted(["ADMINISTRATOR"])
+    @Restricted("bot_owner")
     async reloadCog(message: Message, args: string[], bot: Bot) {
         let module: Module;
         try {
@@ -78,6 +79,13 @@ export default class Standard extends Module {
         log.info(`Module activated with name ${module.name}`);
         bot.modules.set(module.name, module);
         message.channel.send(`Der Cog ${module.name} wurde geladen!`);
+    }
+
+    @Command({ aliases: ["pull"] })
+    @Restricted("bot_owner")
+    async update(message: Message, args: string[], bot: Bot) {
+        message.channel.send("Restarting...")
+        exec(`git pull ${args[0] || ""} && pm2 restart dursti`);
     }
 
     @Command({ aliases: ["ava", "pfp", "profilbild", "pb"] })
@@ -152,3 +160,5 @@ export default class Standard extends Module {
         });
     }
 }
+
+export default Standard;

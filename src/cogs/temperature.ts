@@ -1,10 +1,10 @@
 import axios from "axios";
 import { Message } from "discord.js";
-import { Bot } from "..";
+import Bot from "../bot";
 import { Cog, Command, Module } from "../cog";
 
 @Cog("temp")
-export default class Temp extends Module {
+export class Temp extends Module {
     @Command()
     antitemp(message: Message, args: string[], bot: Bot) {
         axios.get("http://localhost:3328/temp").then(res => {
@@ -12,3 +12,5 @@ export default class Temp extends Module {
         });
     }
 }
+
+export default Temp;

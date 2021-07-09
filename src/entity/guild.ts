@@ -1,7 +1,13 @@
+/**
+ * @module Guild 
+ */
 import {Entity, Column, BaseEntity, PrimaryColumn} from "typeorm";
 
 
 @Entity()
+/**
+ * The database's guild model.
+ */
 export class Guild extends BaseEntity{
 
     constructor(id: string) {
@@ -30,3 +36,4 @@ export class Guild extends BaseEntity{
     brettExcluded: string[];
 
 }
+export default Guild;

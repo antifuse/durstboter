@@ -1,11 +1,11 @@
 import { Collection, DMChannel, GuildEmoji, Message, MessageEmbed, ReactionEmoji, TextChannel } from "discord.js";
-import { Bot } from "..";
+import Bot from "../bot";
 import { Cog, Command, Module } from "../cog"
 import { BrettMessage } from "../entity/brettmessage";
 import log from "../log";
 
 @Cog("brett")
-export default class Brett extends Module {
+export class Brett extends Module {
 
     messages: Collection<string, BrettMessage> = new Collection();
 
@@ -96,3 +96,5 @@ export default class Brett extends Module {
         });
     }
 }
+
+export default Brett;
