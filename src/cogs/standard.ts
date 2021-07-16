@@ -85,7 +85,7 @@ export class Standard extends Module {
     @Restricted("bot_owner")
     async update(message: Message, args: string[], bot: Bot) {
         message.channel.send("Restarting...")
-        exec(`git pull ${args[0] || ""} && pm2 restart dursti`);
+        exec(`git pull ${args.join(" ") || ""} && pm2 restart dursti`);
     }
 
     @Command({ aliases: ["ava", "pfp", "profilbild", "pb"] })
