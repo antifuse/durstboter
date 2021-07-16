@@ -85,11 +85,12 @@ export class Standard extends Module {
     @Command({ aliases: ["pull"] })
     @Restricted("bot_owner")
     async update(message: Message, args: string[], bot: Bot) {
-        message.channel.send("Restarting...")
-        exec(`git pull ${args.join(" ") || ""}`, (err, stdout, stderr) => {
+        exec(`git pull ${args.join(" ") || ""}`, async (err, stdout, stderr) => {
             log.warn(stderr);
             log.info(stdout);
-            message.channel.send("```\n" + stdout + "```")
+            await message.channel.send("```\n" + stdout + "```");
+            await message.channel.send("Restarting...");
+            exec("pm2 restart dursti")
         });
     }
 
