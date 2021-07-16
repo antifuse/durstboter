@@ -97,7 +97,7 @@ export class Standard extends Module {
     @Command({ aliases: ["log"]})
     @Restricted("bot_owner")
     async logs(message: Message, args: string[], bot: Bot) {
-        log.query({limit: 15, fields: ["message"]}, (err, res) => message.channel.send("```\n" + res + "```"))
+        log.query({limit: 15, fields: ["message"]}, (err, res) => message.channel.send("```\n" + res.message + "```"))
     }
 
     @Command({ aliases: ["ava", "pfp", "profilbild", "pb"] })
