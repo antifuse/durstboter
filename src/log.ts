@@ -7,12 +7,17 @@ winston.addColors({
     debug: "green"
 });
 
-export default winston.createLogger({
+const logger = winston.createLogger({
     format: winston.format.combine(winston.format.timestamp({format:"YYYY-MM-DD HH:mm:ss"}), winston.format.printf(info=>`${info.timestamp} ${info.level} | ${info.message}`), winston.format.colorize()),
     transports: [
         new winston.transports.Console({level: "debug"}),
         new winston.transports.File({filename: "durst.log"})
     ],
-    handleExceptions: true,
     exitOnError: false
+})
+
+logger.transports.forEach(t => {
+    //@ts-ignore
+    logger.rejections.handle(t);
+    logger.exceptions.handle(t);
 })
