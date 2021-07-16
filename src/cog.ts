@@ -23,7 +23,7 @@ export function Restricted(requiredPerms: PermissionResolvable[] | "bot_owner") 
     return function (target: any, _propertyKey: string, descriptor: TypedPropertyDescriptor<Function>) {
         const method = descriptor.value;
         descriptor.value = async (message: Message, ...args: any[]) => {
-            if (message.author.id == (await message.client.fetchApplication()).owner.id) {
+            if (message.author.id == /*(await message.client.fetchApplication())*/message.application.owner.id) {
                 method.apply(this, [message].concat(args));
                 return;
             }
