@@ -22,8 +22,8 @@ export function ServerOnly(target: any, _propertyKey: string, descriptor: Proper
 export function Restricted(requiredPerms: PermissionResolvable[] | "bot_owner") {
     return function (target: any, _propertyKey: string, descriptor: TypedPropertyDescriptor<Function>) {
         const method = descriptor.value;
-        descriptor.value = (message: Message, ...args: any[]) => {
-            if (message.author.id == message.application.owner.id) {
+        descriptor.value = async (message: Message, ...args: any[]) => {
+            if (message.author.id == (await message.client.fetchApplication()).owner.id) {
                 method.apply(this, [message].concat(args));
                 return;
             }
