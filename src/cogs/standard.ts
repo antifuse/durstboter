@@ -94,6 +94,12 @@ export class Standard extends Module {
         });
     }
 
+    @Command({ aliases: ["log"]})
+    @Restricted("bot_owner")
+    async logs(message: Message, args: string[], bot: Bot) {
+        log.query({limit: 15, fields: ["message"]}, (err, res) => message.channel.send("```\n" + res + "```"))
+    }
+
     @Command({ aliases: ["ava", "pfp", "profilbild", "pb"] })
     @ServerOnly
     avatar(message: Message, args: string[], bot: Bot) {
