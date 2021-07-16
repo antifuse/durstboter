@@ -21,3 +21,5 @@ logger.transports.forEach(t => {
     logger.rejections.handle(t);
     logger.exceptions.handle(t);
 })
+
+export default logger;
