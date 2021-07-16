@@ -89,6 +89,7 @@ export class Standard extends Module {
         exec(`git pull ${args.join(" ") || ""} && pm2 restart dursti`, (err, stdout, stderr) => {
             log.warn(stderr);
             log.info(stdout);
+
         });
     }
 

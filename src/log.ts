@@ -12,5 +12,7 @@ export default winston.createLogger({
     transports: [
         new winston.transports.Console({level: "debug"}),
         new winston.transports.File({filename: "durst.log"})
-    ]
+    ],
+    handleExceptions: true,
+    exitOnError: false
 })
