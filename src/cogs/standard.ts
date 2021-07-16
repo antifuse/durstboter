@@ -3,6 +3,7 @@ import Bot from "../bot";
 import { Cog, Command, Module, Restricted, ServerOnly } from "../cog";
 import log from "../log";
 import { exec } from "child_process";
+import { loggers } from "winston";
 
 @Cog()
 export class Standard extends Module {
@@ -85,7 +86,10 @@ export class Standard extends Module {
     @Restricted("bot_owner")
     async update(message: Message, args: string[], bot: Bot) {
         message.channel.send("Restarting...")
-        exec(`git pull ${args.join(" ") || ""} && pm2 restart dursti`);
+        exec(`git pull ${args.join(" ") || ""} && pm2 restart dursti`, (err, stdout, stderr) => {
+            log.warn(stderr);
+            log.info(stdout);
+        });
     }
 
     @Command({ aliases: ["ava", "pfp", "profilbild", "pb"] })
