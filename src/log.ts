@@ -11,7 +11,8 @@ const logger = winston.createLogger({
     format: winston.format.combine(winston.format.timestamp({format:"YYYY-MM-DD HH:mm:ss"}), winston.format.printf(info=>`${info.timestamp} ${info.level} | ${info.message}`), winston.format.colorize()),
     transports: [
         new winston.transports.Console({level: "debug"}),
-        new winston.transports.File({filename: "durst.log"})
+        new winston.transports.File({filename: "durst.log"}),
+        new winston.transports.File({filename: "durst.json", format: winston.format.combine(winston.format.timestamp({format:"YYYY-MM-DD HH:mm:ss"}), winston.format.json())})
     ],
     exitOnError: false
 })

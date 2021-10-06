@@ -97,8 +97,8 @@ export class Standard extends Module {
     @Command({ aliases: ["log"]})
     @Restricted("bot_owner")
     async logs(message: Message, args: string[], bot: Bot) {
-        log.query({limit: 15, fields: ["message"]}, (err, res) => {
-            message.channel.send("```\n" + res.message + "```")
+        log.query({limit: 15, start: 0, order: "asc", fields: ["message", "timestamp"]}, (err, res) => {
+            message.channel.send("```\n" + res.file.map(m => `${m.timestamp} | ${m.message}`).join("\n") + "```");
             console.log(res);
         });
     }
