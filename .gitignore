@@ -10,3 +10,4 @@ config.json
 *.sqlite
 package-lock.json
 reactions.json
+durst.json
