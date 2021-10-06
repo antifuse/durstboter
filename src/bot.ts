@@ -77,11 +77,11 @@ import chalk from "chalk";
     }
 
     /**
-     * The global message handler. Logs incoming messages and delegates them to the activated modules' own message handling methods.
+     * The global message handler, delegates messages to the activated modules' own message handling methods.
      * @param message The message to handle
      */
     async handleMessage(message: Discord.Message) {
-        if (!this.cfg.logoptout.includes(message.author.id)) log.info(`${chalk.cyan(message.author.tag)}/${message.channel.type == "text" ? chalk.gray(message.channel.name):"DM"}: ${message.content}`);
+        if (message.channel.type == "dm") log.info(`${message.author.tag}/DM: ${message.content}`)
         let guild = this.cache.guilds.get(message.guild?.id);
         if (guild) guild.activatedCogs.forEach(c => {
             if (c != "std") this.modules.get(c)?.handleMessage(message, this);
